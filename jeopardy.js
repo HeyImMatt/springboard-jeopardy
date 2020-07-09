@@ -24,8 +24,6 @@
  *
  * Returns array of category ids
  */
-let categories = [];
-
 async function getCategoryIds() {
   try {
     let res = await axios.get('http://jservice.io/api/categories', {params: { count: 100, offset: Math.floor(Math.random() * 7220) } });
@@ -48,7 +46,6 @@ async function getCategoryIds() {
  *      ...
  *   ]
  */
-
 async function getCategory(catId) {
   try {
     let res = await axios.get('http://jservice.io/api/category', {params: { id: catId } });
@@ -70,8 +67,21 @@ async function getCategory(catId) {
  *   each with a question for each category in a <td>
  *   (initally, just show a "?" where the question/answer would go.)
  */
+async function fillTable(clues) {
+  const $gameboard = $('#gameboard');
+  const $thead = $('<thead></thead>');
+  const $tr = $('<tr></tr>');
 
-async function fillTable() {
+  clues.forEach( clue => {
+    const $th = $(`
+      <th>${clue.title}</th>
+    `)
+    $tr.append($th)
+  })
+  $thead.append($tr);
+  $gameboard.append($thead);
+
+  console.log(clues)
 }
 
 /** Handle clicking on a clue: show the question or answer.
@@ -104,15 +114,15 @@ function hideLoadingView() {
  * - get data for each category
  * - create HTML table
  * */
-
 async function setupAndStart() {
   const categories = await getCategoryIds();
-  let cluesPromises = categories.map(async (category) => {
+
+  const cluesPromises = categories.map(async (category) => {
     return await getCategory(category.id)
   });
-  let clues = await Promise.all(cluesPromises);
+  const clues = await Promise.all(cluesPromises);
 
-  console.log(clues)
+  fillTable(clues);
 }
 
 /** On click of start / restart button, set up game. */
