@@ -18,15 +18,23 @@
 //    ...
 //  ]
 
-let categories = [];
 
 
 /** Get NUM_CATEGORIES random category from API.
  *
  * Returns array of category ids
  */
+let categories = [];
 
-function getCategoryIds() {
+async function getCategoryIds() {
+  try {
+    let res = await axios.get('http://jservice.io/api/categories', {params: { count: 100, offset: Math.floor(Math.random() * 7220) } });
+    return _.sampleSize(res.data, 6)
+  }
+  catch (err) {
+    alert('Oops! Something went wrong! Try again.')
+    throw new Error(err)
+  }
 }
 
 /** Return object with data about a category:
@@ -87,11 +95,11 @@ function hideLoadingView() {
  * */
 
 async function setupAndStart() {
+  getCategoryIds();
 }
 
 /** On click of start / restart button, set up game. */
-
-// TODO
+$('#new-game-btn').click(setupAndStart);
 
 /** On page load, add event handler for clicking clues */
 
