@@ -49,7 +49,18 @@ async function getCategoryIds() {
  *   ]
  */
 
-function getCategory(catId) {
+async function getCategory(catId) {
+  try {
+    let res = await axios.get('http://jservice.io/api/category', {params: { id: catId } });
+    if (res.data.clues_count > 5) {
+      return { title: res.data.title, clues: _.sampleSize(res.data.clues, 5) }
+    } 
+    return { title: res.data.title, clues: res.data.clues }
+  }
+  catch (err) {
+    alert('Oops! Something went wrong! Try again.')
+    throw new Error(err)
+  }
 }
 
 /** Fill the HTML table#jeopardy with the categories & cells for questions.
@@ -95,7 +106,13 @@ function hideLoadingView() {
  * */
 
 async function setupAndStart() {
-  getCategoryIds();
+  const categories = await getCategoryIds();
+  let cluesPromises = categories.map(async (category) => {
+    return await getCategory(category.id)
+  });
+  let clues = await Promise.all(cluesPromises);
+
+  console.log(clues)
 }
 
 /** On click of start / restart button, set up game. */
