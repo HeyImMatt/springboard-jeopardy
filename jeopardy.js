@@ -76,7 +76,7 @@ function fillTable(categories) {
   //creates the category headers
   categories.forEach((category) => {
     let $categorySquare = $(`
-      <th>${category.title.toUpperCase()}</th>
+      <th class="col-2">${category.title.toUpperCase()}</th>
     `);
     $theadRow.append($categorySquare);
   });
@@ -89,7 +89,7 @@ function fillTable(categories) {
     let clues = categories.map((category) => category.clues[i]);
     clues.forEach((clue) => {
       let $clueSquare = $(`
-        <td class="game-square"><span class="question-mark">?</span><span class="question">${clue.question.toUpperCase()}</span><span class="answer">${clue.answer.toUpperCase()}</span></td>
+        <td class="game-square col-2"><span class="question-mark showing">?</span><span class="question hidden">${clue.question.toUpperCase()}</span><span class="answer hidden">${clue.answer.toUpperCase()}</span></td>
       `)
       $tbodyRow.append($clueSquare)
     });
@@ -105,8 +105,23 @@ function fillTable(categories) {
  * - if currently "question", show answer & set .showing to "answer"
  * - if currently "answer", ignore click
  * */
-
-function handleClick(evt) {}
+function handleClick(evt) {
+  console.dir(evt.currentTarget);
+  //Hide question mark, show question
+  if (evt.currentTarget.firstChild.classList.contains('showing')) {
+    evt.currentTarget.firstChild.classList.remove('showing');
+    evt.currentTarget.firstChild.classList.add('hidden');
+    evt.currentTarget.firstChild.nextSibling.classList.remove('hidden');
+    evt.currentTarget.firstChild.nextSibling.classList.add('showing');
+  } 
+  //Hide question, show answer
+  else if (evt.currentTarget.firstChild.nextSibling.classList.contains('showing')) {
+    evt.currentTarget.firstChild.nextSibling.classList.remove('showing');
+    evt.currentTarget.firstChild.nextSibling.classList.add('hidden');
+    evt.currentTarget.lastChild.classList.remove('hidden');
+    evt.currentTarget.lastChild.classList.add('showing');
+  }
+}
 
 /** Wipe the current Jeopardy board, show the loading spinner,
  * and update the button used to fetch data.
@@ -139,5 +154,4 @@ async function setupAndStart() {
 $('#new-game-btn').click(setupAndStart);
 
 /** On page load, add event handler for clicking clues */
-
-// TODO
+$('#gameboard').on('click', '.game-square', { event }, handleClick);

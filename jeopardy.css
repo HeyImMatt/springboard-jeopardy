@@ -20,10 +20,19 @@
   font-family: 'Stoke', serif;
 }
 
-.question {
+.table th {
+  width: 16.67%;
+}
+
+.game-square {
+  width: 16.67%;
+  cursor: pointer;
+}
+
+.hidden {
   display: none;
 }
 
-.answer {
-  display: none;
+.showing {
+  display: inline-block;
 }
