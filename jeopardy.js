@@ -18,20 +18,19 @@
 //    ...
 //  ]
 
-
-
 /** Get NUM_CATEGORIES random category from API.
  *
  * Returns array of category ids
  */
 async function getCategoryIds() {
   try {
-    let res = await axios.get('http://jservice.io/api/categories', {params: { count: 100, offset: Math.floor(Math.random() * 7220) } });
-    return _.sampleSize(res.data, 6)
-  }
-  catch (err) {
-    alert('Oops! Something went wrong! Try again.')
-    throw new Error(err)
+    let res = await axios.get('http://jservice.io/api/categories', {
+      params: { count: 100, offset: Math.floor(Math.random() * 7220) },
+    });
+    return _.sampleSize(res.data, 6);
+  } catch (err) {
+    alert('Oops! Something went wrong! Try again.');
+    throw new Error(err);
   }
 }
 
@@ -48,15 +47,16 @@ async function getCategoryIds() {
  */
 async function getCategory(catId) {
   try {
-    let res = await axios.get('http://jservice.io/api/category', {params: { id: catId } });
+    let res = await axios.get('http://jservice.io/api/category', {
+      params: { id: catId },
+    });
     if (res.data.clues_count > 5) {
-      return { title: res.data.title, clues: _.sampleSize(res.data.clues, 5) }
-    } 
-    return { title: res.data.title, clues: res.data.clues }
-  }
-  catch (err) {
-    alert('Oops! Something went wrong! Try again.')
-    throw new Error(err)
+      return { title: res.data.title, clues: _.sampleSize(res.data.clues, 5) };
+    }
+    return { title: res.data.title, clues: res.data.clues };
+  } catch (err) {
+    alert('Oops! Something went wrong! Try again.');
+    throw new Error(err);
   }
 }
 
@@ -67,21 +67,35 @@ async function getCategory(catId) {
  *   each with a question for each category in a <td>
  *   (initally, just show a "?" where the question/answer would go.)
  */
-async function fillTable(clues) {
+function fillTable(categories) {
   const $gameboard = $('#gameboard');
   const $thead = $('<thead></thead>');
-  const $tr = $('<tr></tr>');
-
-  clues.forEach( clue => {
-    const $th = $(`
-      <th>${clue.title}</th>
-    `)
-    $tr.append($th)
-  })
-  $thead.append($tr);
+  const $theadRow = $('<tr></tr>')
+  const $tbody = $('<tbody></tbody>');
+  
+  //creates the category headers
+  categories.forEach((category) => {
+    let $categorySquare = $(`
+      <th>${category.title.toUpperCase()}</th>
+    `);
+    $theadRow.append($categorySquare);
+  });
+  $thead.append($theadRow)
   $gameboard.append($thead);
 
-  console.log(clues)
+  //creates the clue squares
+  for (let i = 0; i < categories.length - 1; i++) {
+    let $tbodyRow = $('<tr></tr>')
+    let clues = categories.map((category) => category.clues[i]);
+    clues.forEach((clue) => {
+      let $clueSquare = $(`
+        <td class="game-square"><span class="question-mark">?</span><span class="question">${clue.question.toUpperCase()}</span><span class="answer">${clue.answer.toUpperCase()}</span></td>
+      `)
+      $tbodyRow.append($clueSquare)
+    });
+    $tbody.append($tbodyRow)
+  }
+  $gameboard.append($tbody);
 }
 
 /** Handle clicking on a clue: show the question or answer.
@@ -92,21 +106,17 @@ async function fillTable(clues) {
  * - if currently "answer", ignore click
  * */
 
-function handleClick(evt) {
-}
+function handleClick(evt) {}
 
 /** Wipe the current Jeopardy board, show the loading spinner,
  * and update the button used to fetch data.
  */
 
-function showLoadingView() {
-
-}
+function showLoadingView() {}
 
 /** Remove the loading spinner and update the button used to fetch data. */
 
-function hideLoadingView() {
-}
+function hideLoadingView() {}
 
 /** Start game:
  *
@@ -115,14 +125,14 @@ function hideLoadingView() {
  * - create HTML table
  * */
 async function setupAndStart() {
-  const categories = await getCategoryIds();
+  const categoryIds = await getCategoryIds();
 
-  const cluesPromises = categories.map(async (category) => {
-    return await getCategory(category.id)
+  const categoriesPromises = categoryIds.map(async (categoryId) => {
+    return await getCategory(categoryId.id);
   });
-  const clues = await Promise.all(cluesPromises);
+  const categories = await Promise.all(categoriesPromises);
 
-  fillTable(clues);
+  fillTable(categories);
 }
 
 /** On click of start / restart button, set up game. */

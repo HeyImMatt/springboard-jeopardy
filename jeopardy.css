@@ -1,7 +1,29 @@
 /* some colors you may find useful:
-  #115ff4
-  #060ce9
-  #28a200
-  #8d2ab5
-  #74119c
+  #115ff4 - blue
+  #060ce9 - blue
+  #28a200 - green
+  #8d2ab5 - purple
+  #74119c - purple
 */
+
+.table {
+  background-color: #060ce9;
+  color: white;
+  text-align: center;
+}
+
+.table thead {
+  font-family: Helvetica, sans-serif;
+}
+
+.table tbody {
+  font-family: 'Stoke', serif;
+}
+
+.question {
+  display: none;
+}
+
+.answer {
+  display: none;
+}
