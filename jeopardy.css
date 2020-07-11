@@ -6,26 +6,57 @@
   #74119c - purple
 */
 
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+h1 {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#new-game-btn{
+  display: block;
+  width: 150px;
+  height: 30px;
+  border-radius: 5px;
+  border: 1px solid;
+  margin: 0px auto 20px auto;
+  cursor: pointer;
+}
+
 .table {
+  height: 450px;
   background-color: #060ce9;
   color: white;
   text-align: center;
+  vertical-align: middle;
+  border: none;
 }
 
 .table thead {
   font-family: Helvetica, sans-serif;
+  vertical-align: middle;
 }
 
 .table tbody {
   font-family: 'Stoke', serif;
+  font-size: .75rem;
 }
 
 .table th {
   width: 16.67%;
+  border: 2px solid white;
 }
 
 .game-square {
   width: 16.67%;
+  height: 20%;
   cursor: pointer;
 }
 
@@ -35,4 +66,5 @@
 
 .showing {
   display: inline-block;
+  margin: auto;
 }

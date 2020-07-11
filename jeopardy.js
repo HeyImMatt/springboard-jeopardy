@@ -73,10 +73,12 @@ function fillTable(categories) {
   const $theadRow = $('<tr></tr>')
   const $tbody = $('<tbody></tbody>');
   
+  $gameboard.html('')
+
   //creates the category headers
   categories.forEach((category) => {
     let $categorySquare = $(`
-      <th class="col-2">${category.title.toUpperCase()}</th>
+      <th>${category.title.toUpperCase()}</th>
     `);
     $theadRow.append($categorySquare);
   });
@@ -89,7 +91,7 @@ function fillTable(categories) {
     let clues = categories.map((category) => category.clues[i]);
     clues.forEach((clue) => {
       let $clueSquare = $(`
-        <td class="game-square col-2"><span class="question-mark showing">?</span><span class="question hidden">${clue.question.toUpperCase()}</span><span class="answer hidden">${clue.answer.toUpperCase()}</span></td>
+        <td class="game-square"><span class="question-mark showing">?</span><span class="question hidden">${clue.question.toUpperCase()}</span><span class="answer hidden">${clue.answer.toUpperCase()}</span></td>
       `)
       $tbodyRow.append($clueSquare)
     });
@@ -120,6 +122,7 @@ function handleClick(evt) {
     evt.currentTarget.firstChild.nextSibling.classList.add('hidden');
     evt.currentTarget.lastChild.classList.remove('hidden');
     evt.currentTarget.lastChild.classList.add('showing');
+    evt.currentTarget.style.backgroundColor = '#28a200';
   }
 }
 
