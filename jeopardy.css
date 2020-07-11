@@ -15,23 +15,28 @@
   margin-right: auto;
 }
 
-h1 {
- margin: 10px auto 10px auto;
+img {
+  display: block;
+  margin: 0 auto 10px auto;
 }
 
 #new-game-btn{
   display: block;
   width: 150px;
-  height: 30px;
+  height: 35px;
   border-radius: 5px;
-  border: 1px solid;
+  border: 2px solid;
   margin: 0px auto 20px auto;
   cursor: pointer;
+  font-family: Helvetica, sans-serif;
+  color: #FFCC00;
+  background-color: #060ce9;
 }
 
 .table {
   background-color: #060ce9;
   color: white;
+  text-shadow: 2px 2px 2px black;
   text-align: center;
   vertical-align: middle;
 }
@@ -59,6 +64,11 @@ h1 {
   cursor: pointer;
   background-color: #060ce9;
   border: 2px solid black;
+}
+
+.fa-question-circle {
+  font-size: 2rem;
+  color: #FFCC00;
 }
 
 .answered {

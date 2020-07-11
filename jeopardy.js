@@ -91,7 +91,7 @@ function fillTable(categories) {
     let clues = categories.map((category) => category.clues[i]);
     clues.forEach((clue) => {
       let $clueSquare = $(`
-        <td class="game-square"><span class="question-mark showing">?</span><span class="question hidden">${clue.question.toUpperCase()}</span><span class="answer hidden">${clue.answer.toUpperCase()}</span></td>
+        <td class="game-square"><span class="showing"><i class="fa fa-question-circle" aria-hidden="true"></i></span><span class="question hidden">${clue.question.toUpperCase()}</span><span class="answer hidden">${clue.answer.toUpperCase()}</span></td>
       `)
       $clueSquare.on('animationend', function() {
         $clueSquare.removeClass('animate__animated', 'animate__flip')
@@ -122,7 +122,6 @@ function handleClick(evt) {
   //Hide question, show answer
   else if (evt.currentTarget.firstChild.nextSibling.classList.contains('showing')) {
     evt.currentTarget.classList.add('animate__animated', 'animate__flip','answered');
-    console.dir(evt.currentTarget);
     evt.currentTarget.firstChild.nextSibling.classList.remove('showing');
     evt.currentTarget.firstChild.nextSibling.classList.add('hidden');
     evt.currentTarget.lastChild.classList.remove('hidden');
