@@ -1,11 +1,3 @@
-/* some colors you may find useful:
-  #115ff4 - blue
-  #060ce9 - blue
-  #28a200 - green
-  #8d2ab5 - purple
-  #74119c - purple
-*/
-
 .container {
   display: flex;
   flex-direction: column;
@@ -15,9 +7,15 @@
   margin-right: auto;
 }
 
-img {
+.logo {
   display: block;
   margin: 0 auto 10px auto;
+}
+
+#loading-gif {
+  width: 350px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #new-game-btn{
@@ -43,7 +41,6 @@ img {
 
 .table thead {
   font-family: Helvetica, sans-serif;
-  vertical-align: middle;
 }
 
 .table tbody {

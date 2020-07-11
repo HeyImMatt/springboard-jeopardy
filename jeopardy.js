@@ -1,27 +1,4 @@
-// categories is the main data structure for the app; it looks like this:
-
-//  [
-//    { title: "Math",
-//      clues: [
-//        {question: "2+2", answer: 4, showing: null},
-//        {question: "1+1", answer: 2, showing: null}
-//        ...
-//      ],
-//    },
-//    { title: "Literature",
-//      clues: [
-//        {question: "Hamlet Author", answer: "Shakespeare", showing: null},
-//        {question: "Bell Jar Author", answer: "Plath", showing: null},
-//        ...
-//      ],
-//    },
-//    ...
-//  ]
-
-/** Get NUM_CATEGORIES random category from API.
- *
- * Returns array of category ids
- */
+//Returns array of category ids
 async function getCategoryIds() {
   try {
     let res = await axios.get('http://jservice.io/api/categories', {
@@ -34,17 +11,7 @@ async function getCategoryIds() {
   }
 }
 
-/** Return object with data about a category:
- *
- *  Returns { title: "Math", clues: clue-array }
- *
- * Where clue-array is:
- *   [
- *      {question: "Hamlet Author", answer: "Shakespeare", showing: null},
- *      {question: "Bell Jar Author", answer: "Plath", showing: null},
- *      ...
- *   ]
- */
+//Returns object with clues for a category
 async function getCategory(catId) {
   try {
     let res = await axios.get('http://jservice.io/api/category', {
@@ -60,20 +27,12 @@ async function getCategory(catId) {
   }
 }
 
-/** Fill the HTML table#jeopardy with the categories & cells for questions.
- *
- * - The <thead> should be filled w/a <tr>, and a <td> for each category
- * - The <tbody> should be filled w/NUM_QUESTIONS_PER_CAT <tr>s,
- *   each with a question for each category in a <td>
- *   (initally, just show a "?" where the question/answer would go.)
- */
+//Fill the HTML table#jeopardy with the categories & cells for questions.
 function fillTable(categories) {
   const $gameboard = $('#gameboard');
   const $thead = $('<thead></thead>');
-  const $theadRow = $('<tr></tr>')
+  const $theadRow = $('<tr></tr>');
   const $tbody = $('<tbody></tbody>');
-  
-  $gameboard.html('')
 
   //creates the category headers
   categories.forEach((category) => {
@@ -82,62 +41,66 @@ function fillTable(categories) {
     `);
     $theadRow.append($categorySquare);
   });
-  $thead.append($theadRow)
+  $thead.append($theadRow);
   $gameboard.append($thead);
 
   //creates the clue squares
   for (let i = 0; i < categories.length - 1; i++) {
-    let $tbodyRow = $('<tr></tr>')
+    let $tbodyRow = $('<tr></tr>');
     let clues = categories.map((category) => category.clues[i]);
     clues.forEach((clue) => {
       let $clueSquare = $(`
         <td class="game-square"><span class="showing"><i class="fa fa-question-circle" aria-hidden="true"></i></span><span class="question hidden">${clue.question.toUpperCase()}</span><span class="answer hidden">${clue.answer.toUpperCase()}</span></td>
-      `)
-      $clueSquare.on('animationend', function() {
-        $clueSquare.removeClass('animate__animated', 'animate__flip')
-      })
-      $tbodyRow.append($clueSquare)
+      `);
+      $clueSquare.on('animationstart', function () {
+        $clueSquare.css('pointer-events', 'none');
+      });
+      $clueSquare.on('animationend', function () {
+        $clueSquare.css('pointer-events', 'auto');
+        $clueSquare.removeClass('animate__animated', 'animate__flip');
+      });
+      $tbodyRow.append($clueSquare);
     });
-    $tbody.append($tbodyRow)
+    $tbody.append($tbodyRow);
   }
   $gameboard.append($tbody);
 }
 
-/** Handle clicking on a clue: show the question or answer.
- *
- * Uses .showing property on clue to determine what to show:
- * - if currently null, show question & set .showing to "question"
- * - if currently "question", show answer & set .showing to "answer"
- * - if currently "answer", ignore click
- * */
 function handleClick(evt) {
   //Hide question mark, show question
   if (evt.currentTarget.firstChild.classList.contains('showing')) {
-    evt.currentTarget.firstChild.classList.remove('showing');
-    evt.currentTarget.firstChild.classList.add('hidden');
-    evt.currentTarget.firstChild.nextSibling.classList.remove('hidden');
-    evt.currentTarget.firstChild.nextSibling.classList.add('showing');
     evt.currentTarget.classList.add('animate__animated', 'animate__flip');
-  } 
+    evt.currentTarget.firstChild.className = 'hidden';
+    evt.currentTarget.firstChild.nextSibling.className = 'showing';
+  }
   //Hide question, show answer
-  else if (evt.currentTarget.firstChild.nextSibling.classList.contains('showing')) {
-    evt.currentTarget.classList.add('animate__animated', 'animate__flip','answered');
-    evt.currentTarget.firstChild.nextSibling.classList.remove('showing');
-    evt.currentTarget.firstChild.nextSibling.classList.add('hidden');
-    evt.currentTarget.lastChild.classList.remove('hidden');
-    evt.currentTarget.lastChild.classList.add('showing');
+  else if (
+    evt.currentTarget.firstChild.nextSibling.classList.contains('showing')
+  ) {
+    evt.currentTarget.classList.add(
+      'animate__animated',
+      'animate__flip',
+      'answered',
+    );
+    evt.currentTarget.firstChild.nextSibling.className = 'hidden';
+    evt.currentTarget.lastChild.className = 'showing';
   }
 }
 
-/** Wipe the current Jeopardy board, show the loading spinner,
- * and update the button used to fetch data.
+/** Wipe the current Jeopardy board, show the loading gif,
+and update the button used to fetch data.
  */
+function showLoadingView() {
+  $('#gameboard').html('');
+  $('#new-game-btn').text('LOADING...');
+  $('#loading-gif').removeClass('hidden');
+}
 
-function showLoadingView() {}
-
-/** Remove the loading spinner and update the button used to fetch data. */
-
-function hideLoadingView() {}
+// Remove the loading gif and update the button used to fetch data.
+function hideLoadingView() {
+  $('#new-game-btn').text('START NEW GAME');
+  $('#loading-gif').addClass('hidden');
+}
 
 /** Start game:
  *
@@ -146,6 +109,8 @@ function hideLoadingView() {}
  * - create HTML table
  * */
 async function setupAndStart() {
+  showLoadingView();
+
   const categoryIds = await getCategoryIds();
 
   const categoriesPromises = categoryIds.map(async (categoryId) => {
@@ -153,7 +118,10 @@ async function setupAndStart() {
   });
   const categories = await Promise.all(categoriesPromises);
 
-  fillTable(categories);
+  setTimeout(() => {
+    fillTable(categories);
+    hideLoadingView();
+  }, 1500);
 }
 
 /** On click of start / restart button, set up game. */
