@@ -50,12 +50,14 @@ h1 {
   width: 16.67%;
   height: 75px;
   border: 2px solid black;
+  cursor: default;
 }
 
 .game-square {
   width: 16.67%;
   height: 90px;
   cursor: pointer;
+  background-color: #060ce9;
   border: 2px solid black;
 }
 

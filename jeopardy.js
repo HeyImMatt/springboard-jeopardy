@@ -93,6 +93,9 @@ function fillTable(categories) {
       let $clueSquare = $(`
         <td class="game-square"><span class="question-mark showing">?</span><span class="question hidden">${clue.question.toUpperCase()}</span><span class="answer hidden">${clue.answer.toUpperCase()}</span></td>
       `)
+      $clueSquare.on('animationend', function() {
+        $clueSquare.removeClass('animate__animated', 'animate__flip')
+      })
       $tbodyRow.append($clueSquare)
     });
     $tbody.append($tbodyRow)
@@ -108,21 +111,22 @@ function fillTable(categories) {
  * - if currently "answer", ignore click
  * */
 function handleClick(evt) {
-  console.dir(evt.currentTarget);
   //Hide question mark, show question
   if (evt.currentTarget.firstChild.classList.contains('showing')) {
     evt.currentTarget.firstChild.classList.remove('showing');
     evt.currentTarget.firstChild.classList.add('hidden');
     evt.currentTarget.firstChild.nextSibling.classList.remove('hidden');
     evt.currentTarget.firstChild.nextSibling.classList.add('showing');
+    evt.currentTarget.classList.add('animate__animated', 'animate__flip');
   } 
   //Hide question, show answer
   else if (evt.currentTarget.firstChild.nextSibling.classList.contains('showing')) {
+    evt.currentTarget.classList.add('animate__animated', 'animate__flip','answered');
+    console.dir(evt.currentTarget);
     evt.currentTarget.firstChild.nextSibling.classList.remove('showing');
     evt.currentTarget.firstChild.nextSibling.classList.add('hidden');
     evt.currentTarget.lastChild.classList.remove('hidden');
     evt.currentTarget.lastChild.classList.add('showing');
-    evt.currentTarget.classList.add('answered');
   }
 }
 
