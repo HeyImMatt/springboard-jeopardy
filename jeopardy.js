@@ -122,7 +122,7 @@ function handleClick(evt) {
     evt.currentTarget.firstChild.nextSibling.classList.add('hidden');
     evt.currentTarget.lastChild.classList.remove('hidden');
     evt.currentTarget.lastChild.classList.add('showing');
-    evt.currentTarget.style.backgroundColor = '#28a200';
+    evt.currentTarget.classList.add('answered');
   }
 }
 
