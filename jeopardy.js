@@ -27,63 +27,73 @@ async function getCategory(catId) {
   }
 }
 
-//Fill the HTML table#jeopardy with the categories & cells for questions.
+//Fill the HTML table with the categories & cells for clues.
 function fillTable(categories) {
   const $gameboard = $('#gameboard');
   const $thead = $('<thead></thead>');
   const $theadRow = $('<tr></tr>');
   const $tbody = $('<tbody></tbody>');
 
-  //creates the category headers
-  categories.forEach((category) => {
-    let $categorySquare = $(`
-      <th>${category.title.toUpperCase()}</th>
-    `);
-    $theadRow.append($categorySquare);
+  categories.forEach((category, idx) => {
+    $theadRow.append(buildCategorySquare(category));
+    if (idx < 5) $tbody.append(buildClueSquares(categories, idx));
   });
+
   $thead.append($theadRow);
   $gameboard.append($thead);
-
-  //creates the clue squares
-  for (let i = 0; i < categories.length - 1; i++) {
-    let $tbodyRow = $('<tr></tr>');
-    let clues = categories.map((category) => category.clues[i]);
-    clues.forEach((clue) => {
-      let $clueSquare = $(`
-        <td class="game-square"><span class="showing"><i class="fa fa-question-circle" aria-hidden="true"></i></span><span class="question hidden">${clue.question.toUpperCase()}</span><span class="answer hidden">${clue.answer.toUpperCase()}</span></td>
-      `);
-      $clueSquare.on('animationstart', function () {
-        $clueSquare.css('pointer-events', 'none');
-      });
-      $clueSquare.on('animationend', function () {
-        $clueSquare.css('pointer-events', 'auto');
-        $clueSquare.removeClass('animate__animated', 'animate__flip');
-      });
-      $tbodyRow.append($clueSquare);
-    });
-    $tbody.append($tbodyRow);
-  }
   $gameboard.append($tbody);
+}
+
+function buildCategorySquare(category) {
+  return $(`<th>${category.title.toUpperCase()}</th>`);
+}
+
+function buildClueSquares(categories, idx) {
+  let $tbodyRow = $('<tr></tr>');
+
+  let clues = categories.map((category) => category.clues[idx]);
+
+  clues.forEach((clue) => {
+    let $clueSquare = $(`
+      <td class="game-square">
+        <span class="showing">
+          <i class="fa fa-question-circle" aria-hidden="true"></i>
+        </span>
+        <span class="question hidden">${clue.question.toUpperCase()}</span>
+        <span class="answer hidden">${clue.answer.toUpperCase()}</span>
+      </td>
+    `);
+    $clueSquare.on('animationstart', function () {
+      $clueSquare.css('pointer-events', 'none');
+    });
+    $clueSquare.on('animationend', function () {
+      $clueSquare.css('pointer-events', 'auto');
+      $clueSquare.removeClass('animate__animated', 'animate__flip');
+    });
+    $tbodyRow.append($clueSquare);
+  })
+
+  return $tbodyRow;
 }
 
 function handleClick(evt) {
   //Hide question mark, show question
-  if (evt.currentTarget.firstChild.classList.contains('showing')) {
+  if (evt.currentTarget.firstElementChild.classList.contains('showing')) {
     evt.currentTarget.classList.add('animate__animated', 'animate__flip');
-    evt.currentTarget.firstChild.className = 'hidden';
-    evt.currentTarget.firstChild.nextSibling.className = 'showing';
+    evt.currentTarget.firstElementChild.className = 'hidden';
+    evt.currentTarget.firstElementChild.nextElementSibling.className = 'showing';
   }
   //Hide question, show answer
   else if (
-    evt.currentTarget.firstChild.nextSibling.classList.contains('showing')
+    evt.currentTarget.firstElementChild.nextElementSibling.classList.contains('showing')
   ) {
     evt.currentTarget.classList.add(
       'animate__animated',
       'animate__flip',
       'answered',
     );
-    evt.currentTarget.firstChild.nextSibling.className = 'hidden';
-    evt.currentTarget.lastChild.className = 'showing';
+    evt.currentTarget.firstElementChild.nextElementSibling.className = 'hidden';
+    evt.currentTarget.lastElementChild.className = 'showing';
   }
 }
 
